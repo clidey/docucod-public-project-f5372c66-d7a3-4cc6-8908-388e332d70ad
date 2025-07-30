@@ -3,4 +3,166 @@ title: "Prerequisites & System Requirements"
 description: "Learn about the hardware, operating system, Python version, and external tool requirements needed to run Open Deep Research smoothly. This page clarifies what you’ll need, including supported model providers and dependencies, to avoid surprises later in setup."
 ---
 
-*This page will automatically be generated from the codebase*
+# Prerequisites & System Requirements
+
+Welcome to Open Deep Research! This page details the essential hardware, software, Python versions, and external tools you need before installing and running Open Deep Research. Understanding these requirements upfront ensures a smooth setup and prevents unexpected issues during operation.
+
+---
+
+## 1. Hardware Requirements
+
+Open Deep Research is designed to work effectively on modern desktop or server environments. To run it smoothly, ensure your system meets the following minimum specifications:
+
+- **Processor:** 4-core CPU (Intel i5 generation or equivalent recommended)
+- **Memory (RAM):** Minimum 8 GB, 16 GB or more recommended for concurrent research workloads
+- **Storage:** At least 2 GB of free disk space for code, dependencies, and temporary files
+- **Network:** Stable internet connection for model API access and search APIs
+
+> **Tip:** More RAM improves concurrency and responsiveness when running multiple researcher agents in parallel.
+
+## 2. Operating System and Python Version
+
+Open Deep Research supports the following environments:
+
+- **Operating Systems:**
+  - Linux (Ubuntu 20.04+ recommended)
+  - macOS (Big Sur 11.0+ recommended)
+  - Windows 10 or higher
+
+- **Python Version:**
+  - Python 3.11.x is required (lower versions are not supported and may cause compatibility issues)
+
+> **Note:** Use Python virtual environments to isolate dependencies.
+
+## 3. Required Python Dependencies
+
+Install dependencies via `pip` using the included `pyproject.toml` or `requirements.txt`:
+
+```bash
+pip install -r pyproject.toml
+```
+
+This will pull in core packages such as:
+
+- `langchain` for model and tool integration
+- `langgraph-cli` for workflow orchestration
+- `rich` for console output enhancement
+- `langsmith` for experiment tracking and evaluation
+
+Additionally, for MCP integration or advanced search APIs, you may need:
+
+- `langchain-mcp-adapters` for MCP client/server functionality
+- Specific API SDKs depending on your chosen search tools (e.g., Tavily, DuckDuckGo, ArXiv)
+
+Check the `.env.example` file to see which environment variables correspond to these integrations.
+
+## 4. Model Provider Compatibility
+
+Open Deep Research relies on large language models supporting **structured output** and **tool calling** features, crucial for complex research workflows:
+
+- **Supported Model Providers:**
+  - OpenAI (including GPT-4.1, GPT-3.x)
+  - Anthropic Claude (claude-3.7-sonnet-latest, claude-3.5-sonnet-latest)
+  - Groq (with token-per-minute limits)
+  - Google Vertex AI (via `init_chat_model` API)
+  - OSS LLMs compatible with LangChain's `init_chat_model` interface
+
+> **Important:**
+> - The workflow planner and writer models must support structured output formats.
+> - The agent models must support tool calling for research and search tool integration.
+> - Some models (e.g., DeepSeek R1) have known limitations with function calling.
+
+Refer to the [LangChain documentation on `init_chat_model()`](https://python.langchain.com/docs/how_to/chat_models_universal_init/) for full details and supported models.
+
+## 5. Search API Support and External Tools
+
+Open Deep Research integrates with various web search APIs and MCP servers to fetch data:
+
+- **Web Search APIs:**
+  - Tavily (default, supports all models)
+  - DuckDuckGo
+  - Perplexity
+  - Exa
+  - ArXiv (academic papers)
+  - PubMed (biomedical literature)
+  - Linkup
+
+- **MCP Servers:**
+  - Local MCP Servers (Filesystem, databases, custom)
+  - Remote MCP Servers (with HTTP/SSE/WebSocket transports)
+
+> **Tip:**
+> - Select `search_api: none` if you wish to use only MCP tools without external web search.
+> - Configure MCP server settings and prompts carefully to enable secure and effective data access.
+
+Example `.env` keys to set your API credentials:
+
+```env
+OPENAI_API_KEY=
+ANTHROPIC_API_KEY=
+GOOGLE_API_KEY=
+TAVILY_API_KEY=
+LANGSMITH_API_KEY=
+```
+
+## 6. Environment and Access Requirements
+
+- **API Keys:** Required for models and search APIs. Store securely in the `.env` file or environment variables.
+- **Internet Access:** Necessary for calls to cloud-based language models and external search APIs.
+- **Firewall Ports:** Ensure outbound access to model APIs and search endpoints is allowed.
+
+## 7. Additional Tools & Optional Dependencies
+
+- **LangGraph CLI:** To run the agent locally via the LangGraph Studio UI
+- **Docker:** Optional for containerized deployments
+- **Node.js / `npx`:** Required if running some local MCP servers (e.g., filesystem MCP server)
+
+## 8. Common Pitfalls
+
+- Running on unsupported Python versions triggers import errors.
+- Missing API keys or invalid keys cause authentication failures.
+- Selecting model/search API combinations incompatible with your licensed plan will fail at runtime.
+- Exceeding token or rate limits on your model provider may interrupt research flows.
+
+## 9. Verification After Setup
+
+1. Confirm Python version:
+
+```bash
+python --version
+# Should print 3.11.x
+```
+
+2. Confirm dependencies installed:
+
+```bash
+pip list | grep -E 'langchain|langgraph|rich'
+```
+
+3. Confirm API keys set:
+
+```bash
+echo $OPENAI_API_KEY
+```
+
+4. Run a quick test command (see Installation page) or launch the LangGraph server and confirm UI opens.
+
+---
+
+## Next Steps
+
+Once all prerequisites are confirmed, proceed to the [Installation Guide](/getting-started/setup-basics/installation) to install and launch Open Deep Research.
+
+For configuring models and search APIs, see [Configuration Setup](/getting-started/setup-basics/configuration-setup).
+
+Access additional resources:
+
+- [Model & Search Configurability](../architecture-and-features/feature-spotlight)
+- [Integration & Deployment Options](../architecture-and-features/integration-and-deployment)
+- [Multi-Agent vs Graph Workflow](../overview/getting-started-intro/what-is-open-deep-research)
+
+<Tip>
+Ensuring your environment meets all prerequisites upfront saves time and prevents errors during interactive research sessions.
+</Tip>
+
+---
