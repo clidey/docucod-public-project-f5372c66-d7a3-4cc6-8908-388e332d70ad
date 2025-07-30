@@ -3,4 +3,272 @@ title: "Integrating Search APIs and MCP Servers"
 description: "Integrate custom web search providers and MCP servers into your research agent. Covers local and remote MCP patterns, secure filesystem access, distributed collaboration, and tool selection for various research environments."
 ---
 
-*This page will automatically be generated from the codebase*
+# Integrating Search APIs and MCP Servers
+
+Integrate custom web search providers and MCP (Model Context Protocol) servers into your Open Deep Research agent. This guide covers key integration patterns, local and remote MCP server configurations, secure filesystem access, distributed collaboration, and best practice tool selection to tailor your research assistant for diverse environments.
+
+---
+
+## 1. Introduction
+
+Open Deep Research supports flexible integration of various external data sources and tools through:
+
+- **Search APIs**: Include popular, general web search services like Tavily, OpenAI web search, and Anthropic web search.
+- **MCP Servers**: The Model Context Protocol enables language models to securely access local or remote capabilities such as filesystems, databases, APIs, and custom tools.
+
+This page focuses specifically on how to enable, configure, and optimize these integrations within your research agents.
+
+---
+
+## 2. Understanding the Integration Landscape
+
+### 2.1 Search APIs
+
+Search APIs let your agent query online sources for the latest information:
+
+- **Tavily**: The default optimized general search for comprehensive, trusted results.
+- **OpenAI Web Search**: Native web search integrated with select OpenAI models.
+- **Anthropic Web Search**: Native search for Anthropic models.
+- **None**: Disable all search APIs to rely solely on MCP tools if desired.
+
+You configure the search API via the `search_api` setting in your agent's configuration.
+
+### 2.2 MCP Servers
+
+MCP servers provide a uniform protocol to expose capabilities directly to the language model tools:
+
+- **Local MCP Servers**: Typically launched as subprocesses (e.g., Filesystem server) with stdio transport.
+- **Remote MCP Servers**: Hosted services accessible over HTTP/SSE/WebSocket, often behind authentication.
+
+MCP enables your researcher agents to perform actions like file browsing, database queries, or invoking APIs seamlessly inside research workflows.
+
+---
+
+## 3. Configuring Search APIs
+
+### 3.1 Selecting a Search API
+
+Set the desired search tool in your configuration:
+
+```python
+from open_deep_research.configuration import Configuration, SearchAPI
+
+config = Configuration(
+    search_api=SearchAPI.TAVILY,  # Options: TAVILY, OPENAI, ANTHROPIC, NONE
+)
+```
+
+### 3.2 Behavior and Tool Availability
+
+The chosen search API determines the search tool included for both supervisor and researcher agents:
+
+- Tavily search tools fetch comprehensive web results, summarizing content efficiently.
+- Native OpenAI or Anthropic web search tools are only compatible with models supporting those APIs.
+- `NONE` disables search tools, useful when fully leveraging MCP.
+
+### 3.3 Example
+
+Integrate Tavily search in a multi-agent setup:
+
+```python
+config = {"configurable": {
+    "search_api": "tavily"
+}}
+```
+
+Your researcher agents will now include the Tavily search tool automatically.
+
+---
+
+## 4. Integrating MCP Servers
+
+MCP integration extends capabilities beyond search to include data access and custom tools.
+
+### 4.1 MCP Server Configuration
+
+Configure MCP servers in your agent’s settings using the `mcp_config` field, which includes:
+
+- `url`: The base URL of the MCP server (for remote servers)
+- `tools`: List of tool names to expose to the agent
+- `auth_required`: Boolean specifying if authentication is needed
+
+Example remote MCP server config:
+
+```json
+{
+  "mcp_config": {
+    "url": "https://api.arcade.dev/v1/mcps/ms_example",
+    "tools": ["Search_SearchHotels", "Search_SearchFlights"],
+    "auth_required": true
+  }
+}
+```
+
+### 4.2 MCP Tools Inclusion
+
+You can optionally specify `mcp_tools_to_include` listing MCP tool names to limit the imported tools.
+
+### 4.3 MCP Prompts
+
+Use the `mcp_prompt` setting to add instructions guiding your agent on how to use MCP tools effectively.
+
+Example:
+
+```
+CRITICAL: Follow this sequence for filesystem MCP tools:
+1. Call `list_allowed_directories` first
+2. Then call `list_directory` on allowed dirs
+3. Finally, call `read_file` on files
+Do NOT skip steps to avoid errors.
+```
+
+### 4.4 Local MCP Servers
+
+Local servers run as child processes with stdio communication:
+
+- Examples include the Filesystem MCP server with secure directory roots.
+- Configure via command and args lists, e.g. in Studio:
+
+```json
+{
+  "filesystem": {
+    "command": "npx",
+    "args": ["-y", "@modelcontextprotocol/server-filesystem", "/your/allowed/path"],
+    "transport": "stdio"
+  }
+}
+```
+
+### 4.5 Loading MCP Tools
+
+Open Deep Research automatically loads MCP tools at startup if configured, seamlessly combining them with search tools for researcher agents.
+
+---
+
+## 5. Secure Filesystem Access with MCP
+
+The Filesystem MCP server offers a controlled way to access local files securely:
+
+- Only specified directories are accessible.
+- Supports directory listing, reading/writing files, and movement operations.
+- Tool and resource names follow the MCP JSON schema, allowing safe invocation.
+
+Typical workflow for agent using filesystem MCP tools:
+
+1. Call `list_allowed_directories` to learn accessible roots.
+2. Use `list_directory` on a root to explore files.
+3. Call `read_file` to fetch file contents.
+
+This prevents unauthorized or accidental file access.
+
+---
+
+## 6. Distributed Collaboration via Remote MCP Servers
+
+Remote MCP servers facilitate multi-user or distributed research setups:
+
+- Can host multiple tools and resources behind a secure API.
+- Use OAuth2/OIDC authentication flows to obtain access tokens (token exchange with Supabase or similar).
+- Open Deep Research handles token fetching and caching transparently when configured.
+
+Remote MCP usage enables your research agent to interact with cloud services or enterprise data without local installs.
+
+---
+
+## 7. Practical Steps to Enable MCP in Your Agent
+
+1. **Choose MCP Server(s)**
+
+   - Decide between local servers (e.g., filesystem) or remote servers (cloud-based).
+   - Identify the tools and resources required for your research domain.
+
+2. **Configure MCP Server Info**
+
+   - Add the server URL, tool list, and auth settings to your agent configuration under `mcp_config`.
+
+3. **Add MCP Prompt Instructions**
+
+   - Provide clear guidelines to the model via the `mcp_prompt` to enforce calling sequences or usage constraints.
+
+4. **Select Search API or Disable Search**
+
+   - Optionally set `search_api` to 'none' if you want your agent to rely solely on MCP.
+
+5. **Run your Agent**
+
+   - The agent will auto-load MCP tools and combine them with search tools for comprehensive research.
+
+6. **Test Access and Tool Availability**
+
+   - Confirm MCP tools appear in the agent’s tool list.
+   - Perform trial queries accessing MCP resources.
+
+---
+
+## 8. Common Pitfalls and Troubleshooting
+
+- **MCP Tool Conflicts**: Duplicate tool names between MCP and other tools will cause warnings and tool exclusion. Use `mcp_tools_to_include` to filter.
+
+- **Authentication Failures**: Ensure valid tokens are provided and refreshed; check OAuth configurations.
+
+- **Incorrect MCP Prompt Usage**: Missing call order or sequence rules may lead to invalid tool calls. Follow prompt instructions carefully.
+
+- **Transport Issues**: Local MCP servers require stdio transport; remote servers typically use HTTP + SSE or WebSocket. Verify network accessibility.
+
+- **Search API & Model Compatibility**: Search APIs like OpenAI or Anthropic require matching model capabilities. Tavily works more broadly.
+
+- **Rate Limits**: High concurrency with multiple MCP tools or searches may hit API rate limits. Adjust concurrency.
+
+---
+
+## 9. Example Configurations
+
+### 9.1 Combining Tavily Search with Filesystem MCP Server
+
+```json
+{
+  "search_api": "tavily",
+  "mcp_config": {
+    "url": null
+  },
+  "mcp_prompt": "\nCRITICAL: You MUST first call list_allowed_directories before accessing files.",
+  "mcp_tools_to_include": ["list_allowed_directories", "list_directory", "read_file"]
+}
+```
+
+### 9.2 Using Only MCP with Remote Authenticated Server
+
+```json
+{
+  "search_api": "none",
+  "mcp_config": {
+    "url": "https://api.arcade.dev/v1/mcps/ms_0ujssxh0cECutqzMgbtXSGnjorm",
+    "tools": ["Search_SearchHotels", "Search_SearchRoundtripFlights"],
+    "auth_required": true
+  },
+  "mcp_prompt": "Use the provided tools to access hotel and flight search data in a logical order."
+}
+```
+
+---
+
+## 10. Next Steps & Related Resources
+
+- **Integrating Search APIs and MCP Servers with Open Deep Research Quickstart**: Learn from hands-on examples in [multi-agent usage notebook](src/legacy/multi_agent.ipynb).
+- **Configuration and Model Selection Guide**: Customize models and API keys appropriately.
+- **Open Agent Platform (OAP)**: Deploy agents with your MCP configuration for user-friendly interaction.
+- **Evaluating and Benchmarking Research Output**: Validate that your MCP integration improves research quality.
+
+Explore the deeper architectural concepts in [System Architecture Overview](../overview/architecture-and-features/system-architecture) and [How Research Flows](../overview/architecture-and-features/how-research-flows).
+
+For MCP server development and SDK use, visit:
+
+- [Model Context Protocol Official Site](https://modelcontextprotocol.io)
+- [Anthropic MCP GitHub](https://github.com/modelcontextprotocol)
+- [Microsoft Copilot Studio MCP integration](https://learn.microsoft.com/en-us/microsoft-copilot-studio/advanced-generative-actions)
+
+---
+
+<TagSet tags=["integration", "MCP", "search", "configuration", "tools"] />
+
+<section-meta next-steps="guides/integration-patterns/deployment-and-ui" related-docs="guides/core-workflows/configuring-research-agents" />
