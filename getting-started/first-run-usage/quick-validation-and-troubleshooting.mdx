@@ -3,4 +3,195 @@ title: "Quick Validation & Troubleshooting"
 description: "Solutions for the most common setup issues and quick validation steps to ensure your agent is working as expected. Covers connectivity problems, misconfiguration, model compatibility, and steps to verify successful agent responses."
 ---
 
-*This page will automatically be generated from the codebase*
+# Quick Validation & Troubleshooting Guide
+
+Ensure your Open Deep Research agent is ready to deliver high-quality research reports by following these quick validation and troubleshooting steps. This guide helps you identify and resolve frequent setup issues with connectivity, configuration, model compatibility, and verifying successful agent operations.
+
+---
+
+## 1. Validate Agent Connectivity and Setup
+
+Follow these practical steps to confirm your environment is correctly configured and your agent can communicate with required services.
+
+<Steps>
+<Step title="Check Environment Variables and API Keys">
+Verify all necessary environment variables and API keys are set for the models and search APIs.
+
+```bash
+# Check OpenAI key example on macOS/Linux
+echo $OPENAI_API_KEY
+
+# On Windows Powershell
+echo $Env:OPENAI_API_KEY
+```
+
+Make sure keys for providers like OpenAI, Anthropic, Tavily, and MCP servers are properly configured.
+</Step>
+<Step title="Test Network Access and Firewall">
+Ensure that your system allows outgoing requests to the search APIs and MCP servers you plan to use.
+
+- Verify ports and firewall rules permit API traffic.
+- Test curl or ping commands to target URLs (e.g., Tavily endpoint).
+</Step>
+<Step title="Verify Installation and Dependencies">
+Confirm that all Python dependencies and packages are installed without errors.
+
+```bash
+pip list | grep open-deep-research
+pip check
+```
+
+Rerun installation if any packages are missing or broken.
+</Step>
+</Steps>
+
+<Warning>
+If you encounter permission or system errors during any step, ensure you have appropriate OS-level access rights and the correct Python version (3.11 recommended).
+</Warning>
+
+---
+
+## 2. Confirm Model and Search API Compatibility
+
+Proper model and search API configuration ensures smooth agent operation and reliable report generation.
+
+- Confirm you are using models supporting **structured outputs** and **tool calling** (e.g., OpenAI GPT-4.1, Anthropic Claude 3.7).
+- Verify your search API setting matches the API key and endpoint you have access to (e.g., `search_api: 'tavily'`).
+- For MCP-enabled setups, validate MCP server configurations and that the MCP tools are properly included.
+
+Example configuration snippet:
+```python
+config = {
+    'configurable': {
+        'search_api': 'tavily',
+        'supervisor_model': 'openai:o3',
+        'researcher_model': 'openai:o3',
+        'max_researcher_iterations': 5,
+        'max_concurrent_research_units': 10,
+        'max_structured_output_retries': 3,
+        'mcp_server_config': { ... }  # If using MCP
+    }
+}
+```
+
+<Tip>
+Use consistent model and API pairs to avoid authorization and compatibility errors - for example, use Tavily search with models known to support it.
+</Tip>
+
+---
+
+## 3. Quick Verification: Run a Basic Research Query
+
+Test whether the agent can successfully process a query and generate output.
+
+1. Launch LangGraph server locally and access Studio UI:
+
+```bash
+uvx --refresh --from "langgraph-cli[inmem]" --with-editable . --python 3.11 langgraph dev --allow-blocking
+```
+
+Access Studio UI at:
+
+```
+https://smith.langchain.com/studio/?baseUrl=http://127.0.0.1:2024
+```
+
+2. Enter a simple query in the `messages` input, for example:
+
+```text
+What is Model Context Protocol (MCP)? Provide an architectural overview.
+```
+
+3. Click `Submit` and watch for the agent's response:
+
+- Successful output includes a markdown-formatted report or research summary.
+- Errors or empty responses indicate setup or configuration issues.
+
+<Check>
+If the agent stalls or errors repeatedly, review model compatibility, API keys, and network connectivity.
+</Check>
+
+---
+
+## 4. Troubleshooting Common Issues
+
+Here are common problems users face and how to fix them.
+
+<AccordionGroup title="Common Troubleshooting Topics">
+<Accordion title="No Response or Timeout">
+- Check that your API keys are valid and not expired.
+- Inspect firewall settings blocking outbound connections.
+- Reduce `max_concurrent_research_units` to avoid rate limiting.
+- Review LangGraph server logs for specific error messages.
+</Accordion>
+<Accordion title="Token Limit Exceeded Errors">
+- Adjust max tokens per model configuration to stay within limits.
+- Reduce length or complexity of research queries.
+- Enable retries and pruning in the config (`max_structured_output_retries=3`).
+- For the final report generation, the system automatically reduces input size on retry but customizing token limits helps.
+</Accordion>
+<Accordion title="Incorrect or Poor-Quality Output">
+- Validate model choice supports structured outputs and tool calls.
+- Experiment with alternate models (e.g., switching from Anthropic to OpenAI or vice versa).
+- Increase `max_researcher_iterations` to allow more reflection and better answers.
+- Confirm your search API fetches relevant documents.
+</Accordion>
+<Accordion title="MCP Server Connection Issues">
+- Verify MCP server is running and accessible at configured path or URL.
+- Check that MCP prompt and tools to include are correctly set.
+- Review MCP server-specific logs for errors.
+- Ensure client transport (stdio, SSE, WebSocket) is correctly configured.
+</Accordion>
+</AccordionGroup>
+
+---
+
+## 5. Running Full Evaluation Tests
+
+For comprehensive validation, use the provided pytest evaluation system:
+
+```bash
+# Run tests for all agents with rich output
+python tests/run_test.py --all
+
+# Test multi-agent implementation specifically
+python tests/run_test.py --agent multi_agent --supervisor-model "anthropic:claude-3-7-sonnet-latest" --search-api tavily
+```
+
+This test suite executes end-to-end research workflows and verifies report quality against defined criteria.
+
+<Note>
+Test outcomes are logged to LangSmith for detailed analysis.
+</Note>
+
+---
+
+## 6. Verification Checklist
+
+Use this checklist to confirm your agent is fully operational:
+
+- [ ] Environment variables and API keys are properly set
+- [ ] Search APIs and MCP tools configured correctly
+- [ ] LangGraph server running without errors
+- [ ] Agent responds to simple queries with research output
+- [ ] No token limit errors or excessive retries
+- [ ] Evaluation tests pass without critical failures
+
+---
+
+## Additional Resources & Links
+
+- [Installation Guide](../setup-basics/installation) — Step-by-step install instructions
+- [Configuration Setup](../setup-basics/configuration-setup) — Customizing models, search APIs & MCP
+- [Launching the Agent](./launching-agent) — Starting LangGraph server and Studio UI
+- [Your First Research Query](./your-first-research-query) — Submitting queries and viewing results
+- [Evaluating and Benchmarking Research Output](../../guides/evaluation-and-best-practices/running-evaluations) — Understand Pytest and LangSmith evaluation systems
+- [Multi-Agent Implementation Deep Dive](../../guides/evaluation-and-best-practices/legacy-implementations-guide#multi-agent-implementation) — MCP tool usage and concurrency
+
+---
+
+If issues persist, consult the community or open an issue at the [GitHub repo](https://github.com/langchain-ai/open_deep_research).
+
+---
+
+*This guide empowers you to quickly verify your Open Deep Research setup and resolve common challenges, ensuring smooth research generation from your first query onward.*
