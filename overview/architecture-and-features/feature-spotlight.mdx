@@ -3,4 +3,135 @@ title: "Feature Highlights"
 description: "Survey key product features: model and search tool configurability, structured output, multi-agent workflows, MCP integration (local & remote), batch evaluation, report quality assurance, and support for UI and API deployments."
 ---
 
-*This page will automatically be generated from the codebase*
+# Feature Highlights of Open Deep Research
+
+Open Deep Research is a powerful, open-source agent framework designed to automate deep, multi-source research and produce detailed, structured reports. This page spotlights key features that empower researchers, developers, and organizations to harness advanced AI capabilities efficiently and flexibly. Whether configuring models, integrating external tools, or deploying at scale, these highlights illustrate how Open Deep Research stands out as a robust solution for automated research.
+
+---
+
+## Model and Search Tool Configurability
+
+Open Deep Research enables fine-grained control over all models and search tools involved in the research process, making it adaptable to diverse needs and preferences.
+
+- **Multi-Model Roles:** Configure specialized models for distinct tasks such as summarization, research analysis, report compression, and final report generation. For example, the system can use high-capacity models for deep research and lightweight models for summarization, optimizing resource use and performance.
+- **Search API Flexibility:** Supports multiple search providers like Tavily, Perplexity, DuckDuckGo, OpenAI native search, and Anthropic native search. This allows users to select the best search tool matching their data sources or compliance requirements.
+- **Custom Configuration:** All models and search settings can be customized via environment variables, web UI, or direct configuration objects with support for API key management and provider-specific options.
+
+### Practical Tip:
+Configure searches to narrow domain scopes or specify result counts for precision, such as restricting Exa search to trusted scientific domains.
+
+---
+
+## Structured Output and Tool Calling
+
+Structured outputs and tool calling form the backbone of reliable, programmatic research with Open Deep Research.
+
+- **Structured Output Enforcement:** All models used must support structured outputs, ensuring the AI returns machine-readable data that can be processed or chained for further research.
+- **Tool Calling Support:** Models can invoke tools (search APIs, MCP endpoints, or local commands) dynamically, enabling research flows that combine AI reasoning with live data access.
+- **Retries and Error Handling:** The system automatically retries structured output parsing multiple times to maximize accuracy and gracefully handles token limits or other operational errors.
+
+---
+
+## Multi-Agent Research Workflows
+
+Open Deep Research offers two core implementations that balance control, speed, and flexibility.
+
+### 1. Graph-Based Workflow Implementation
+- Structured, sequential plan-and-execute design
+- Human-in-the-loop with feedback and approval at the planning stage
+- Produces high-quality, accurate, and well-structured reports
+- Ideal for academic, professional, or critical research requiring fine control
+
+### 2. Multi-Agent Implementation
+- Supervisor-Researcher collaborative pattern enabling parallelized research
+- Multiple researchers investigate topics concurrently, improving speed
+- Supports MCP tools alongside traditional search, enhancing data access
+- Especially suited for rapid business intelligence and exploratory research
+
+This dual approach lets users choose between precision and speed based on their project needs.
+
+---
+
+## Model Context Protocol (MCP) Integration
+
+Open Deep Research extends research capabilities through deep integration with the Model Context Protocol (MCP), a standard open-sourced by Anthropic.
+
+- **Local and Remote MCP Servers:** Connect to file systems, databases, APIs, and SaaS tools securely through MCP servers, accessible locally via stdio or remotely via authenticated HTTP streams.
+- **Seamless Tool Integration:** MCP tools are available to research agents alongside conventional search APIs, enabling rich, context-aware data retrieval.
+- **Configuration Flexibility:** Users can configure server commands, transport methods, and tailored prompts to optimize MCP interactions.
+- **Use Cases:** Includes local code/documentation browsing, database queries, and API integration directly inside the research workflow.
+
+### Best Practice:
+When using filesystem MCP servers, always discover allowed directories first before browsing or reading files to maintain security and correct operations.
+
+---
+
+## Batch Evaluation and Report Quality Assurance
+
+Quality is central to Open Deep Research, supported by comprehensive evaluation frameworks.
+
+- **Pytest Evaluation System:** Provides immediate, developer-friendly pass/fail feedback across multiple quality criteria such as topic relevance, structure, citations, and clarity.
+- **LangSmith Evaluate API:** Offers multi-dimensional scoring with weighted criteria, batch processing, and long-term experiment tracking.
+- **Evaluation Criteria:** Covers research depth, writing quality, balance, objectivity, and structural compliance.
+- **Testing Flexibility:** Run tests on specific agents, with custom models, and different search APIs to optimize configurations.
+
+These evaluation tools ensure reports are reliable, actionable, and professionally crafted.
+
+---
+
+## User Experience and Deployment Support
+
+Open Deep Research supports both local and hosted deployments, tailored to developers and non-technical users alike.
+
+- **LangGraph Studio:** Local LangGraph server with a browser-based UI for interactive experimentation and command-driven workflows.
+- **Hosted Deployment:** Easy rollout on LangGraph Platform for team or organizational use.
+- **Open Agent Platform (OAP):** A no-code UI that empowers non-technical users to configure and run research agents with custom MCP tools and search APIs.
+- **Extensive Documentation and Examples:** Includes Jupyter notebooks, configuration guides, and example MCP servers.
+
+This range of interfaces and deployment options democratizes advanced AI research automation.
+
+---
+
+## Visual Overview
+
+![Open Deep Research Architecture](https://github.com/user-attachments/assets/12a2371b-8be2-4219-9b48-90503eb43c69)
+
+The architecture shows the interplay between user inputs, multi-agent workflows, configurable models, search APIs, MCP integrations, and evaluation tools, ultimately producing a structured, well-sourced research report.
+
+---
+
+## Getting Started at a Glance
+
+1. Clone the repository and set up your environment.
+2. Install dependencies and configure API keys.
+3. Pick an implementation approach: Graph-based or Multi-agent.
+4. Customize models, search tools, and MCP servers.
+5. Launch LangGraph server or deploy to preferred platform.
+6. Input research topics and receive comprehensive reports.
+
+For full setup instructions, environment variables, and model requirements, see the [Installation & Configuration Setup documentation](https://docs.oap.langchain.com/setup/agents).
+
+---
+
+## Troubleshooting and Best Practices
+
+- **Model Compatibility:** Ensure chosen models support structured outputs and tool calling.
+- **API Keys:** Properly configure API credentials for search providers and MCP.
+- **Concurrency:** Tune maximum concurrent research units cautiously to balance speed and rate limits.
+- **MCP Tool Usage:** Follow required tool invocation sequences to avoid errors, especially for local servers.
+- **Report Planning:** Utilize the workflow implementation if fine control and intermediate feedback are essential.
+
+---
+
+## Further Reading and References
+
+- [Open Deep Research GitHub Repository](https://github.com/langchain-ai/open_deep_research)
+- [Model Context Protocol (MCP) Official Site](https://modelcontextprotocol.io)
+- [LangGraph Documentation](https://langchain-ai.github.io/langgraph/)
+- [Open Agent Platform (OAP) Overview](https://docs.oap.langchain.com)
+
+---
+
+Open Deep Research is a versatile, configurable platform tailored for depth, speed, and extensibility—bringing advanced AI-powered research capabilities into your hands through thoughtful design and cutting-edge integrations.
+
+---
