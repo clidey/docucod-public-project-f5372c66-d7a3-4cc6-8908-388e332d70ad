@@ -3,4 +3,248 @@ title: "Deep Researcher: From Question to Report"
 description: "Walk through the end-to-end journey with Open Deep Research: from asking your initial question, through research, clarification, and tool-augmented exploration, to generating a comprehensive report. Understand the steps each agent takes and how their outputs combine."
 ---
 
-*This page will automatically be generated from the codebase*
+# Deep Researcher: From Question to Report
+
+Welcome to the Deep Researcher guide, where you will explore the complete end-to-end journey of conducting deep, structured research using Open Deep Research's multi-agent architecture. This documentation focuses specifically on how the Deep Researcher flow manages your query from the moment you ask it through iterative research, clarification, augmentation via tools, and finally, report generation.
+
+---
+
+## 1. Workflow Overview
+
+### What This Guide Helps You Accomplish
+Explore the full cycle of Open Deep Research’s Deep Researcher agent workflow:
+- Asking and clarifying your initial question
+- Generating a research brief
+- Managing a research supervisor agent that orchestrates parallel research tasks
+- Running multiple researcher agents to gather detailed findings
+- Compressing and synthesizing gathered research
+- Producing a final comprehensive report
+
+This guide breaks down each phase, showing how the system’s agents and tools collaborate seamlessly to deliver a high-quality research report.
+
+### Prerequisites
+- Basic knowledge of how to submit a question to Open Deep Research via LangGraph Studio or an integration interface.
+- Properly configured environment with model API keys (OpenAI, Anthropic, etc.) and search APIs.
+- Optionally set up MCP servers if you want to augment research with local or custom data sources.
+
+### Expected Outcome
+By the end of this process, you will have:
+- A verified, clarified research question
+- Parallel research tasks executed independently and combined
+- Synthesized research notes compressed for efficiency
+- A detailed, polished final markdown report summarizing the findings
+
+### Time Estimate
+Typically, this flow completes in minutes, depending on concurrency and model latencies.
+
+### Difficulty Level
+Intermediate — familiarity with AI agents and research-oriented workflows is helpful.
+
+---
+
+## 2. Step-by-Step Workflow Explained
+
+### Step 1: Clarify Your Question
+After you submit your initial query, the system first checks if clarification is needed.
+
+**What Happens:**  
+- If clarification is enabled in your configuration, the system asks you focused questions to refine the research scope.
+- Otherwise, it proceeds directly to creating a research brief.
+
+**User Actions:**  
+- Answer clarifying questions if prompted.
+
+**Success Check:**  
+- Clarification either confirms your question or collects more context to guide research.
+
+### Step 2: Write the Research Brief
+Once the question is clear:
+
+**What Happens:**  
+- The deep researcher formulates a research brief that defines the scope and goals of the investigation.
+- This brief serves as the guiding prompt for the entire research cycle.
+
+**User Actions:**  
+- Review any outputs if available, but this step is mainly automated.
+
+**Success Check:**  
+- A concrete, detailed research brief is generated.
+
+### Step 3: Supervisor Agent Orchestration
+The supervisor acts as the research manager:
+
+**What Happens:**  
+- It reviews the brief and decides what research to conduct.
+- It creates discrete research units (topics) and assigns them as parallel tasks to researcher agents.
+- It gathers and synthesizes their outputs.
+
+**System Details:**  
+- The supervisor cycles through research iterations, reflecting and refining as needed.
+- It enforces concurrency limits and exit criteria to balance thoroughness and performance.
+
+**Success Check:**  
+- Successful completion occurs when research units cover the brief adequately or stop conditions trigger.
+
+### Step 4: Researcher Agents Conduct Explorations
+Multiple researcher agents investigate assigned topics:
+
+**What Happens:**  
+- Each researcher agent receives a focused research topic.
+- The agent uses configured tools (web search APIs and/or MCP servers) to gather information.
+- It responds with findings, summaries, and relevant notes.
+
+**User Actions:**  
+- Provide necessary API keys and MCP tool configurations for tool-augmented research.
+
+**Success Check:**  
+- Researcher outputs include compressed summaries and raw research data for use by the supervisor.
+
+### Step 5: Compression and Synthesis
+Collected research notes can be quite large. Compression helps:
+
+**What Happens:**  
+- The researcher compresses gathered material, synthesizing it into digestible insights.
+- The system attempts retries on token limit or API failures.
+
+**Success Check:**  
+- Compressed research outputs are concise yet informative, ready for final report integration.
+
+### Step 6: Final Report Generation
+With all research collected:
+
+**What Happens:**  
+- The final report model composes a coherent, structured markdown report.
+- It draws from the research brief, all gathered notes, and system messages.
+- The process includes retry logic to handle token limit constraints by dynamically truncating content.
+
+**Output:**  
+- A comprehensive report addressing the original question with citations and organized presentation.
+
+**Success Check:**  
+- The final report is generated without errors, cleared of intermediate messages.
+
+---
+
+## 3. Practical Examples
+
+### Example Query Flow
+```json
+{
+  "messages": [
+    {"role": "user", "content": "Explain the Model Context Protocol (MCP) with an architectural overview, highlight notable servers, and compare to Google's Agent2Agent protocol."}
+  ]
+}
+```
+
+**Expected Interaction:**
+- Prompt clarification questions if enabled
+- Generate research brief outlining MCP focus
+- Supervisor creates parallel units researching MCP architecture, servers, and A2A comparison
+- Researchers return synthesized results
+- System produces the final report with structured markdown
+
+### Sample Config Snippet
+```python
+config = {
+  "configurable": {
+    "allow_clarification": True,
+    "max_concurrent_research_units": 5,
+    "search_api": "tavily",
+    "research_model": "openai:gpt-4.1",
+    "compression_model": "openai:gpt-4.1-mini",
+    "final_report_model": "openai:gpt-4.1",
+    "max_researcher_iterations": 3,
+    "max_react_tool_calls": 5,
+    # Optional MCP setup
+    "mcp_server_config": {
+      "filesystem": {
+        "command": "npx",
+        "args": ["-y", "@modelcontextprotocol/server-filesystem", "/path/to/docs"],
+        "transport": "stdio"
+      }
+    },
+    "mcp_prompt": "Follow exact steps when using filesystem tools...",
+    "mcp_tools_to_include": ["list_allowed_directories", "list_directory", "read_file"]
+  }
+}
+```
+
+### Integration Tips
+- Ensure your API keys for all configured models and search services are set in environment variables.
+- For advanced users, customize concurrency and iteration limits to optimize performance and cost.
+- Use MCP servers to enrich research with domain-specific or local data beyond web search.
+
+---
+
+## 4. Common Pitfalls and Troubleshooting
+
+### Issue: Clarification Loop or Agent Asking Endless Questions
+- Check that `allow_clarification` is set according to your preference.
+- Providing clear and complete initial questions reduces the need for clarification.
+
+### Issue: Token Limit Exceeded Errors
+- Models have maximum token limits; the system attempts retries by pruning context.
+- Lower `max_tokens` or reduce concurrency if errors persist.
+
+### Issue: No Tools Found or Tool Execution Failures
+- Confirm search API or MCP server is configured and reachable.
+- For MCP, ensure the server runs with the proper transport and authentication.
+- Verify tool availability with diagnostic commands or logs.
+
+### Issue: Incomplete or Empty Final Report
+- Check intermediate messages and tool outputs to identify where data is lost.
+- Verify model keys and API limits.
+- Consider increasing researcher iterations or max_react_tool_calls.
+
+---
+
+## 5. Next Steps & Related Resources
+
+- After mastering the Deep Researcher workflow, explore advanced configuration in [Configuring Models, Search, and Research Parameters](../configuring-research-agents).
+- Learn about iterative refinements and clarification in [Clarification, Reflection, and Advanced Iterations](../clarification-and-iteration).
+- For integrating external data beyond web search, dive into [Integrating Search APIs and MCP Servers](../../integration-patterns/using-search-mcp-models).
+- Understand the system architecture underpinning this process in [System Architecture Overview](../../architecture-and-features/system-architecture).
+- For deployment and operational best practices, see [Deployment & UI](../../integration-patterns/deployment-and-ui).
+
+---
+
+## Diagram: Deep Researcher Workflow Overview
+
+```mermaid
+flowchart TD
+  Start([User submits initial question]) --> Clarify[Clarify with User]
+  Clarify -- "Needs clarification?" --> |Yes| UserInput[User provides clarification]
+  UserInput --> Clarify
+  Clarify -- "Ready to proceed?" --> ResearchBrief[Write Research Brief]
+  ResearchBrief --> Supervisor[Research Supervisor]
+  Supervisor -->|Generates research units| ParallelResearcher[Researcher Agents]
+  ParallelResearcher -->|Gather research outputs| Supervisor
+  Supervisor -- "Research complete or iteration limit?" --> |Yes| FinalReport[Generate Final Report]
+  Supervisor -- "Continue iterations" --> Supervisor
+  FinalReport --> End([Report ready for user])
+
+  classDef decision fill:#f9f,stroke:#333,stroke-width:2px
+  class Clarify decision
+  class Supervisor decision
+```
+
+---
+
+## Summary
+This page focused exclusively on the "Deep Researcher: From Question to Report" workflow, detailing the journey your question takes through the Open Deep Research system. We covered from initial clarification, research planning by the supervisor, parallel researcher execution with tools, compression of findings, to the final report writing and generation. Practical examples, configuration tips, troubleshooting, and related resources were provided.
+
+Refer back to the full [Open Deep Research Documentation](../../overview/getting-started-intro/what-is-open-deep-research) for architectural context and setup instructions. To expand your capabilities, explore customization guides and integration patterns in the Guides section.
+
+This knowledge equips you to confidently run, troubleshoot, and customize your deep research workflows efficiently.
+
+---
+
+_For detailed setup, searching, and evaluation, consult:_
+- [Configuration Setup](../../getting-started/setup-basics/configuration-setup)
+- [Your First Research Query](../../getting-started/first-run-usage/your-first-research-query)
+- [System Architecture Overview](../../overview/architecture-and-features/system-architecture)
+- [Integrating Search APIs and MCP Servers](../../guides/integration-patterns/using-search-mcp-models)
+
+---
+
+# End of Deep Researcher Guide
