@@ -1,0 +1,150 @@
+---
+title: "Core Concepts & Terminology"
+description: "Get familiar with crucial concepts such as agents, supervisors, research units, model context protocols (MCPs), search APIs, tool calling, and structured output requirements. Solid foundational understanding of these terms prepares users for seamless configuration and effective operation."
+---
+
+# Core Concepts & Terminology
+
+Understanding the foundational concepts and terminology behind Open Deep Research empowers users to configure the system effectively and operate it with confidence. This guide introduces critical terms that clarify how the system functions and how different components interact within the research workflows.
+
+---
+
+## Agents
+
+In Open Deep Research, **agents** are autonomous software entities designed to conduct deep research on user-provided topics. They orchestrate the entire process from planning to data collection, analysis, and report generation.
+
+- Agents leverage large language models (LLMs) to interpret queries, identify research questions, and synthesize information.
+- Different implementations of agents exist, such as the graph-based workflow agent and the multi-agent system.
+
+
+## Supervisors
+
+A **supervisor** is a specialized agent role responsible for overseeing the research process.
+
+- It coordinates multiple research units or sub-agents.
+- In the multi-agent approach, the supervisor manages parallel researchers and compiles their output into a cohesive report.
+- Supervisors may plan research sections, assign tasks, and decide when research is complete.
+
+
+## Research Units
+
+**Research units** are individual tasks or sections assigned for investigation during the research process.
+
+- Each unit corresponds to a focused topic or sub-question within the overall research brief.
+- In the graph-based implementation, sections are studied sequentially with interactive user feedback available at planning stages.
+- In the multi-agent implementation, multiple research units can be processed concurrently by separate researcher agents.
+
+
+## Model Context Protocol (MCP)
+
+The **Model Context Protocol (MCP)** is a critical concept enabling Open Deep Research's extended abilities beyond standard web search.
+
+- MCP is an open, vendor-neutral protocol that allows LLMs to interface securely with external data sources and tools such as filesystems, databases, APIs, and SaaS applications through lightweight servers.
+- MCP servers expose resources and tools via a standardized JSON-RPC 2.0 interface.
+- Using MCP expands research capabilities to include local files, databases, or custom APIs not reachable by traditional web search.
+- MCP support is an exclusive feature of the multi-agent implementation, enabling flexible integration of diverse data sources.
+
+
+## Search APIs
+
+Search APIs connect agents to external information on the web and specialized repositories:
+
+- Open Deep Research integrates multiple search APIs including Tavily, Perplexity, Exa, ArXiv, PubMed, DuckDuckGo, and others.
+- These APIs allow retrieval of search results, summarized content, or academic literature relevant to the research topic.
+- In configuration, you select the preferred search API depending on required data sources and model compatibility.
+- Some MCP-enabled configurations may disable web search and rely solely on MCP tools instead.
+
+
+## Tool Calling
+
+**Tool calling** is the mechanism through which agents invoke external services or capabilities during the research process.
+
+- Open Deep Research models must support tool calling, allowing them to request data retrieval, document access, or other actions dynamically.
+- Tool calls provide structured interactions beyond text completions, critical for integrating MCP tools or web search APIs.
+- Model providers supported by `init_chat_model()` usually support tool calling, including Claude models and OpenAI's GPT variants.
+
+
+## Structured Output Requirements
+
+Structured outputs ensure that models provide information in formats the system can parse and act upon reliably.
+
+- Models involved in planning, research, and report writing must generate structured outputs for robust tool integration.
+- Structured outputs enable reliable parsing of research questions, tool call specifications, and final report content.
+- They minimize errors by allowing retries and validation against expected formats.
+
+
+## Summary of Interaction Flow
+
+Here's how these concepts work together in Open Deep Research:
+
+1. **User Query:** A user submits a research topic.
+2. **Clarification (Optional):** The system may ask clarifying questions to narrow the research scope.
+3. **Research Brief Creation:** The agent formulates a detailed research brief.
+4. **Supervision:** The supervisor plans the research, dividing it into units or sections.
+5. **Research Units Execution:** Research agents perform focused investigations either sequentially or in parallel.
+6. **Tool Calling:** Agents call search APIs or MCP tools dynamically to gather data.
+7. **Structured Synthesis:** Results are synthesized with structured outputs, compressed and evaluated.
+8. **Final Report Generation:** The agent produces a comprehensive, well-structured report with citations.
+
+
+## Practical Implications
+
+- Understanding these core concepts lets you configure which models and tools to use.
+- Awareness of MCP's role helps in deciding whether to augment or replace web search.
+- Knowing how tool calling and structured outputs work ensures smoother troubleshooting and customization.
+
+
+---
+
+## Frequently Used Terminology
+
+| Term              | Description                                                                                  |
+|-------------------|----------------------------------------------------------------------------------------------|
+| Agent             | A software entity that autonomously performs research, analysis, and report generation.      |
+| Supervisor        | Oversees the research process, coordinates research units, and compiles final reports.       |
+| Research Unit     | A discrete segment or section of the research topic delegated for investigation.              |
+| Model Context Protocol (MCP) | Open protocol standard enabling LLMs to access external data/tools securely.         |
+| Search API        | An external API enabling web or academic search capabilities during research.                 |
+| Tool Calling      | Ability of models to invoke external functions or APIs dynamically during processing.         |
+| Structured Output | Strictly formatted model outputs facilitating parsing and integration of model responses.     |
+
+
+---
+
+## Tips and Best Practices
+
+- Always verify your selected models support both **tool calling** and **structured outputs** to prevent integration glitches.
+- Configure **MCP tools** when you need access to specialized or local data beyond web APIs.
+- Use **search API selection** aligned with your data needs — for scholarly content, consider ArXiv or PubMed; for general search, Tavily or Perplexity.
+- Monitor the **tool calling limits** and configure concurrency settings to optimize throughput without overwhelming APIs.
+
+
+## Troubleshooting Common Issues
+
+- **No tools found error:** Ensure your configuration includes at least one search API or MCP tools; otherwise the agent cannot proceed.
+- **Structured output parsing failures:** Retry with models known to support structured outputs or adjust retries in configuration.
+- **Clarification loop errors:** Disable clarification if not required, or supply well-defined user queries.
+- **Token limit exceeded:** Adjust model settings or compress research notes to fit token limits, especially for final report generation.
+
+
+---
+
+## Related Documentation
+
+- [What is Open Deep Research?](./what-is-open-deep-research) — Introduction to the product and its overall purpose.
+- [System Architecture Overview](./system-architecture) — High-level design of the research system.
+- [Integration & Deployment Options](./integration-and-deployment) — Configuring service ecosystem including MCP.
+- [Configuring Models, Search, and Research Parameters](./configuring-research-agents) — Detailed guidance on setting up models and tools.
+- [Deep Researcher: From Question to Report](./researcher-quickstart) — Core workflow examples.
+
+
+---
+
+## Next Steps
+
+- Begin by configuring your research environment with supported models and search APIs.
+- Explore MCP integration if you require access to custom datasets or internal tools.
+- Review the [Getting Started](../../getting-started) guides for installation and first-run instructions.
+- Use evaluation tools to verify report quality, especially when tuning model and tool selections.
+
+---

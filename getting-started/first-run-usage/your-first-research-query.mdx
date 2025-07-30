@@ -1,0 +1,183 @@
+---
+title: "Your First Research Query"
+description: "A hands-on walkthrough to submitting your first research question, using the Studio UI, and interpreting the output. This page ensures every user can experience a complete research cycle, from input to synthesized report."
+---
+
+# Your First Research Query
+
+Welcome to your hands-on introduction to Open Deep Research. This guide walks you through submitting your first research query using the LangGraph Studio UI, shows how the agent processes your input, and explains how to understand and interact with the generated output. Whether you're new to the system or testing it for the first time, this walkthrough will ensure you confidently experience a complete research cycle — from question submission to a synthesized, actionable report.
+
+---
+
+## 1. Accessing the Studio UI
+
+Open Deep Research runs on the LangGraph server, providing a user-friendly web interface called LangGraph Studio. If you followed the installation and launch instructions, your server should be running locally.
+
+- Open your browser and navigate to:
+
+  ```
+  https://smith.langchain.com/studio/?baseUrl=http://127.0.0.1:2024
+  ```
+
+- This UI is your point of control for submitting queries, configuring parameters, and viewing agent-generated reports.
+
+- The UI provides an input field labeled `messages`, which accepts your research question or topic in natural language.
+
+<Tip>
+If the Studio UI does not load:
+- Verify the LangGraph server process is running without errors.
+- Confirm that port `2024` is not blocked by your firewall.
+- Refer to the [Launching the Agent](https://your-docs.com/getting-started/first-run-usage/launching-agent) page for detailed troubleshooting.
+</Tip>
+
+---
+
+## 2. Submitting Your First Query
+
+Follow these steps to submit your initial research question:
+
+<Steps>
+<Step title="Enter Your Question">
+Type a clear and detailed research query in the `messages` input area. For example:
+
+```plaintext
+What is the Model Context Protocol (MCP) and how does it compare to Google's Agent2Agent protocol?
+```
+
+Being precise and specific helps the agent generate richer, relevant content.
+</Step>
+
+<Step title="Submit the Query">
+Click the `Submit` button below the input field to send your query to the research agent.
+
+This triggers the asynchronous research workflow that involves clarification (if enabled), planning, search, synthesis, and report generation.
+</Step>
+</Steps>
+
+<Note>
+All queries are processed with current configurations of models, search APIs, and tools as set in your `.env` or UI settings. You can customize these later for advanced use.
+</Note>
+
+---
+
+## 3. Understanding the Research Workflow in Studio
+
+After submission, the system orchestrates several steps to deliver your report:
+
+1. **Clarification (Optional):** The assistant may prompt you for clarifying questions to better focus the research.
+2. **Research Brief Creation:** The system drafts a research brief summarizing your question.
+3. **Supervisor Agent Planning:** It plans the report structure and sections.
+4. **Researcher Agents or Workflow Execution:** Conducts parallel or sequential research calls, using configured search APIs (e.g., Tavily) and/or MCP tools.
+5. **Content Synthesis:** Research results are compressed and synthesized into coherent sections.
+6. **Report Completion:** The introduction, body sections, and conclusion are composed and assembled.
+
+You will see the query progress and agent messages reflected in the Studio interface, along with structured output if enabled.
+
+<Tip>
+Depending on your configuration, research units may run concurrently or sequentially, impacting speed and depth. You can adjust these settings in the configuration files or UI.
+</Tip>
+
+---
+
+## 4. Viewing and Interpreting the Output
+
+The agent returns a detailed markdown report within the Studio interface. Here's how to interpret it:
+
+- **Introduction:** Sets the context and scope of the investigation.
+- **Body Sections:** Covers researched subtopics with sourced information and citations.
+- **Conclusion:** Summarizes key findings and may include comparative tables or final analysis.
+
+Use built-in markdown rendering in Studio for easy reading, or export the text for external use.
+
+<Note>
+The report is enriched with metadata like source excerpts and notes if configured to include them.
+</Note>
+
+<Info>
+Studio also displays any intermediate messages, clarifications, or tool call logs for transparency and debugging.
+</Info>
+
+---
+
+## 5. Practical Tips for Your First Query
+
+- Provide at least one paragraph describing your topic clearly.
+- Avoid extremely broad questions which may generate generalized reports.
+- Review agent clarifying questions and respond promptly for best results.
+- Use the feedback option in Studio during planning to refine the report scope.
+- If your report seems incomplete, check configuration parameters like `max_researcher_iterations` or `max_concurrent_research_units`.
+
+---
+
+## 6. Example: Submitting a Query and Interpreting the Result
+
+1. Input:
+
+```plaintext
+Explain the Model Context Protocol (MCP) with architectural details and compare it to Google's Agent2Agent protocol.
+```
+
+2. The agent may ask clarifying questions if enabled.
+
+3. The final report will include:
+   - Overview of MCP origins and goals
+   - Architectural breakdown of host-client-server model
+   - Description of security and transport mechanisms
+   - A catalog of notable MCP servers
+   - Case studies of early adopters
+   - A comparative analysis table of MCP vs A2A
+
+4. Use the rendered markdown output to explore the synthesized research.
+
+<Tip>
+Review the generated references and source strings for verification of information grounding.
+</Tip>
+
+---
+
+## 7. Next Steps and Further Exploration
+
+Congratulations! You have completed your first research query cycle. From here, you can:
+
+- Experiment with different topics and observe how the agent adapts.
+- Explore configuring models and search APIs via the [Configuration Setup](https://your-docs.com/getting-started/setup-basics/configuration-setup) page.
+- Test local or remote MCP servers to augment research with custom data sources: see [Integrating Search APIs and MCP Servers](https://your-docs.com/guides/integration-patterns/using-search-mcp-models).
+- Refer to [Quick Validation & Troubleshooting](https://your-docs.com/getting-started/first-run-usage/quick-validation-and-troubleshooting) if you encounter unexpected results.
+
+---
+
+## Troubleshooting Common Issues
+
+<Accordion title="Agent Does Not Respond or Hangs">
+- Ensure the LangGraph server is running and reachable.
+- Confirm that your model API keys are valid and not expired.
+- Check network connectivity and firewall settings.
+- Review server logs for token limit or rate limit errors.
+- Retry shorter queries or lower concurrency settings.
+</Accordion>
+
+<Accordion title="Clarification Questions Appear Unexpectedly">
+- Clarification is controlled via the `allow_clarification` parameter.
+- Disable it if you want the agent to proceed without user interaction.
+- Provide richer initial queries to reduce need for clarifications.
+</Accordion>
+
+<Accordion title="Incomplete or Low-Quality Reports">
+- Increase `max_researcher_iterations` to allow more reflection cycles.
+- Verify your configured models support structured outputs.
+- Adjust `max_react_tool_calls` to allow more in-depth tool usage.
+</Accordion>
+
+---
+
+# Reference Links
+
+- [Open Deep Research Quickstart](https://your-docs.com/getting-started/setup-basics/installation)
+- [Launching the Agent](https://your-docs.com/getting-started/first-run-usage/launching-agent)
+- [Configuration Setup](https://your-docs.com/getting-started/setup-basics/configuration-setup)
+- [Integrating Search APIs and MCP Servers](https://your-docs.com/guides/integration-patterns/using-search-mcp-models)
+- [Legacy Implementations Overview](https://your-docs.com/guides/evaluation-and-best-practices/legacy-implementations-guide)
+
+---
+
+We hope this guide empowers you to immediately start exploring the power of Open Deep Research. Every query you submit unlocks valuable insights — powered by advanced multi-model orchestration and seamless tool integration. Happy researching!

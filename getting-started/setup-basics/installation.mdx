@@ -1,0 +1,254 @@
+---
+title: "Installation"
+description: "Step-by-step directions for installing Open Deep Research across different platforms (Linux, macOS, Windows). Learn how to clone the repository, manage virtual environments, and install all necessary dependencies for a reproducible and reliable setup."
+---
+
+# Installation
+
+Step-by-step directions for installing Open Deep Research on Linux, macOS, and Windows platforms. This guide covers cloning the repository, managing Python virtual environments, and installing all necessary dependencies to ensure a reproducible and reliable setup.
+
+---
+
+## 1. Prerequisites & System Requirements
+
+- **Operating System**: Linux (Ubuntu/Debian preferred), macOS (10.15+), or Windows 10/11
+- **Python Version**: Python 3.11 (ensure compatibility)
+- **Disk Space**: At least 500 MB free to accommodate the repository and dependencies
+- **Memory**: Minimum 8 GB RAM recommended for smooth operation
+- **Network**: External internet access for cloning, package installation, and web API calls
+
+---
+
+## 2. Clone the Repository
+
+Open a terminal or command prompt and execute the following:
+
+```bash
+# Clone the official repository
+git clone https://github.com/langchain-ai/open_deep_research.git
+
+# Enter the project directory
+cd open_deep_research
+```
+
+> This step downloads the entire source code and example notebooks for Open Deep Research.
+
+---
+
+## 3. Set Up a Python Virtual Environment
+
+Using a virtual environment ensures dependency isolation and avoids conflicts.
+
+### macOS / Linux
+
+If `python3` is installed:
+
+```bash
+# Create a virtual environment named .venv
+python3 -m venv .venv
+
+# Activate the virtual environment
+source .venv/bin/activate
+```
+
+### Windows (PowerShell)
+
+```powershell
+# Create a virtual environment
+python -m venv .venv
+
+# Activate the virtual environment
+.\.venv\Scripts\Activate.ps1
+```
+
+<Note>
+If you encounter a security error running the activation script on Windows, you may need to set execution policy temporarily:
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+```
+</Note>
+
+---
+
+## 4. Install Dependencies
+
+Inside the activated virtual environment, install all required Python packages:
+
+```bash
+# Install all dependencies using pip and the provided pyproject.toml
+uv pip install -r pyproject.toml
+```
+
+> This step installs core libraries including `langchain`, `langgraph`, and dependencies for MCP integration and supported search APIs.
+
+---
+
+## 5. Configure Environment Variables
+
+Duplicate the example environment file to `.env` and customize keys:
+
+```bash
+cp .env.example .env
+```
+
+Open `.env` in a text editor and fill in your API keys, such as:
+
+- `OPENAI_API_KEY`
+- `ANTHROPIC_API_KEY`
+- `TAVILY_API_KEY`
+- `GOOGLE_API_KEY`
+
+<Warning>
+All API keys are essential for enabling model providers and search tool integrations. Missing keys will limit functionality.
+</Warning>
+
+---
+
+## 6. Verify Python Environment Setup
+
+Confirm Python version and dependencies:
+
+```bash
+python --version
+# Expected output: Python 3.11.x
+
+pip list | grep langchain
+# Should list installed packages including langchain and open_deep_research
+```
+
+Verify API key environment variables:
+
+- On macOS/Linux:
+
+```bash
+echo $OPENAI_API_KEY
+```
+
+- On Windows Command Prompt:
+
+```cmd
+echo %OPENAI_API_KEY%
+```
+
+---
+
+## 7. Start the LangGraph Server
+
+Run the LangGraph server to launch the Open Deep Research assistant:
+
+### macOS / Linux
+
+```bash
+# Install uv package manager if not installed
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Start the LangGraph server
+uvx --refresh --from "langgraph-cli[inmem]" --with-editable . --python 3.11 langgraph dev --allow-blocking
+```
+
+### Windows / Linux Alternative
+
+```powershell
+pip install -e .
+pip install -U "langgraph-cli[inmem]"
+langgraph dev
+```
+
+---
+
+## 8. Access the Studio UI
+
+Open your web browser and navigate to:
+
+```
+- API Endpoint: http://127.0.0.1:2024
+- Studio UI: https://smith.langchain.com/studio/?baseUrl=http://127.0.0.1:2024
+- API Documentation: http://127.0.0.1:2024/docs
+```
+
+This UI provides the interface for managing conversations, research tasks, and report generation.
+
+---
+
+## 9. Testing the Installation
+
+### Run Example Notebooks
+
+The repository includes example notebooks demonstrating research workflows.
+
+Open Jupyter and load the notebook:
+
+```bash
+jupyter notebook src/legacy/multi_agent.ipynb
+```
+
+Follow documented cells to run multi-agent or graph workflow research.
+
+### Run CLI Tests
+
+You can run automated tests for the multi-agent or graph implementations:
+
+```bash
+# Test multi-agent implementation only
+python tests/run_test.py --agent multi_agent
+
+# Test graph-based implementation only
+python tests/run_test.py --agent graph
+```
+
+These tests check report generation quality and help verify installation integrity.
+
+---
+
+## 10. Troubleshooting Common Issues
+
+<AccordionGroup title="Common Installation Issues and Fixes">
+<Accordion title="Virtual Environment Activation Fails on Windows">
+You may encounter a PowerShell security error. Run:
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+```
+
+Then retry virtual environment activation.
+</Accordion>
+<Accordion title="Missing API Keys or Environment Variables">
+Ensure your `.env` file exists with the correct keys, and the environment variables are loaded. Restart the shell if necessary.
+</Accordion>
+<Accordion title="Dependency Installation Errors">
+Check your Python version (must be 3.11). Upgrade pip:
+
+```bash
+pip install --upgrade pip
+```
+
+If packages fail to build, verify system compilers and libraries.
+</Accordion>
+<Accordion title="LangGraph Server Fails to Start">
+Confirm network ports (default 2024) are free and dependencies installed. Use verbose logging for error clues.
+</Accordion>
+</AccordionGroup>
+
+---
+
+## 11. Next Steps
+
+- Proceed to **Configuration Setup** to customize model providers, search APIs, and MCP details.
+- Explore **Launching the Agent** to interact with and test your research queries.
+- Review **Using MCP Servers** if you want to extend research capabilities with local or remote data sources.
+- Consult the **Troubleshooting and Performance Tips** if issues arise during use.
+
+---
+
+## 12. Additional Resources
+
+- Official GitHub Repository: [https://github.com/langchain-ai/open_deep_research](https://github.com/langchain-ai/open_deep_research)
+- LangGraph Studio Docs: [https://langchain-ai.github.io/langgraph/concepts/#deployment-options](https://langchain-ai.github.io/langgraph/concepts/#deployment-options)
+- Model Context Protocol (MCP) Info: [https://modelcontextprotocol.io](https://modelcontextprotocol.io)
+
+---
+
+**Start your journey toward powerful, automated deep research today!**
+
+---

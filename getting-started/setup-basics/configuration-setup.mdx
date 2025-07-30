@@ -1,0 +1,249 @@
+---
+title: "Configuration Setup"
+description: "Configure your agent’s environment and model behavior by customizing environment variables, model selection, and search tool integration. This page provides a practical walkthrough of editing .env files and highlights key configuration options for various research workflows."
+---
+
+# Configuration Setup
+
+Configure your agent’s environment and model behavior by customizing environment variables, model selection, and search tool integration. This page provides a practical walkthrough of editing `.env` files and highlights key configuration options for various research workflows.
+
+---
+
+## 1. Overview of Configuration Setup
+
+Open Deep Research is highly configurable to fit diverse research needs, workflows, and deployment environments. Most configuration is managed via environment variables, typically set in a `.env` file at your project root.
+
+The configuration controls:
+
+- Which models to use for research, summarization, and reporting
+- Which search APIs or MCP servers to connect for data retrieval
+- Research workflow parameters like concurrency and iteration limits
+
+This page guides you through making these configurations practically actionable and links to deeper configuration references.
+
+---
+
+## 2. Prerequisites for Configuration
+
+Before adjusting your configuration, ensure you have completed the following:
+
+- Cloned the Open Deep Research repository
+- Created and activated a Python 3.11 virtual environment
+- Installed all necessary dependencies
+- Copied `.env.example` to `.env` in your project root
+
+If these steps are incomplete, please see the [Installation](./installation) page first.
+
+---
+
+## 3. Editing the `.env` File
+
+The `.env` file is the primary way to customize your agent environment. Follow these steps to configure it:
+
+### Step 1: Copy the example file
+
+If not done already, create your working `.env` file:
+```bash
+cp .env.example .env
+```
+
+### Step 2: Set API Keys
+
+Fill in the keys for the models and search APIs you plan to use. For example:
+```env
+OPENAI_API_KEY=your_openai_key_here
+ANTHROPIC_API_KEY=your_anthropic_key_here
+GOOGLE_API_KEY=your_google_api_key_here
+TAVILY_API_KEY=your_tavily_key_here
+```
+
+**Tip:** Keep your API keys secure and do not share `.env` files publicly.
+
+### Step 3: Configure Model Options
+
+Specify your preferred models and providers (overridable via environment vars):
+```env
+# Example model preferences
+SUMMARIZATION_MODEL_PROVIDER=anthropic
+SUMMARIZATION_MODEL=claude-3-5-haiku-latest
+RESEARCHER_MODEL=anthropic:claude-3-7-sonnet-latest
+FINAL_REPORT_MODEL=openai:gpt-4.1
+```
+
+These determine which LLM instances the agents use for planning, research, and final report writing.
+
+### Step 4: Select Search API
+
+You can set which search API Open Deep Research will use for retrieving external information:
+```env
+SEARCH_API=tavily
+```
+
+Supported options include:
+- `tavily` (default)
+- `duckduckgo`
+- For multi-agent implementation only: `none` disables web search tools
+
+### Step 5: Configure MCP Server and Tools (Multi-Agent Only)
+
+If you plan to extend research with Model Context Protocol servers (local or remote), add their configuration here:
+```env
+# Example MCP server configuration in JSON string format
+MCP_SERVER_CONFIG={"filesystem": {"command": "npx", "args": ["-y", "@modelcontextprotocol/server-filesystem", "/path/to/your/files"], "transport": "stdio"}}
+MCP_PROMPT=CRITICAL: You MUST follow this EXACT sequence when using filesystem tools: ...
+MCP_TOOLS_TO_INCLUDE=["list_allowed_directories", "list_directory", "read_file"]
+```
+
+Refer to the [MCP Support](#mcp-support) section for practical examples.
+
+---
+
+## 4. Key Configuration Parameters
+
+Below are essential configuration options to adjust based on your desired workflow:
+
+| Parameter                 | Description                                                          | Default                         |
+|---------------------------|----------------------------------------------------------------------|--------------------------------|
+| `SEARCH_API`              | Web search API to use (tavily, duckduckgo, none)                     | `tavily`                       |
+| `SUMMARIZATION_MODEL`     | Model for summarizing search results                                | `claude-3-5-haiku-latest`      |
+| `RESEARCHER_MODEL`        | Model for conducting research and analysis                          | `anthropic:claude-3-7-sonnet-latest` |
+| `FINAL_REPORT_MODEL`      | Model used to write the final research report                       | `openai:gpt-4.1`               |
+| `ALLOW_CLARIFICATION`     | Whether to let the agent ask clarifying questions before research   | `true`                        |
+| `MAX_CONCURRENT_RESEARCH_UNITS` | Number of parallel research tasks (multi-agent only)          | `5`                           |
+| `MCP_SERVER_CONFIG`       | JSON config defining MCP servers                                    | `null` (disabled)              |
+| `MCP_PROMPT`              | Instructions for MCP tool usage                                     | `null`                        |
+| `MCP_TOOLS_TO_INCLUDE`    | List of MCP tools to load (optional)                               | `null` (all tools)             |
+
+---
+
+## 5. Practical Configuration Example
+
+Here is a minimally customized `.env` snippet for a multi-agent setup using Tavily and a local MCP filesystem server:
+
+```env
+# API Keys
+OPENAI_API_KEY=sk-XXXXXXXXXXXXXXXXXXXX
+ANTHROPIC_API_KEY=sk-YYYYYYYYYYYYYYYYYYYY
+TAVILY_API_KEY=abcdef1234567890
+
+# Model Selection
+SUMMARIZATION_MODEL_PROVIDER=anthropic
+SUMMARIZATION_MODEL=claude-3-5-haiku-latest
+RESEARCHER_MODEL=anthropic:claude-3-7-sonnet-latest
+FINAL_REPORT_MODEL=anthropic:claude-3-7-sonnet-latest
+
+# Search and MCP
+SEARCH_API=tavily
+MCP_SERVER_CONFIG={"filesystem": {"command": "npx", "args": ["-y", "@modelcontextprotocol/server-filesystem", "/Users/yourname/data"], "transport": "stdio"}}
+MCP_PROMPT=CRITICAL: You MUST follow this EXACT sequence when using filesystem tools:\n1. Call `list_allowed_directories` first.\n2. Then call `list_directory` on allowed directories.\n3. Finally, use `read_file` tool for files.
+MCP_TOOLS_TO_INCLUDE=["list_allowed_directories", "list_directory", "read_file"]
+
+# Workflow Behavior
+ALLOW_CLARIFICATION=true
+MAX_CONCURRENT_RESEARCH_UNITS=4
+```
+
+---
+
+## 6. Search API Specific Configuration
+
+Some search APIs allow additional configuration via the `SEARCH_API_CONFIG` environment variable (a JSON string). For example, with the `exa` search API:
+
+```env
+SEARCH_API=exa
+SEARCH_API_CONFIG={"num_results":5, "include_domains":["nature.com", "sciencedirect.com"]}
+```
+
+> **Note:** Not all search APIs currently support additional parameters. Please consult the specific API provider for options.
+
+---
+
+## 7. MCP (Model Context Protocol) Support
+
+The multi-agent implementation features powerful MCP integration, enabling your agents to access local filesystems, databases, and external APIs as research tools, augmenting or replacing web search.
+
+### Setup Steps
+
+1. Define your MCP server configuration in `MCP_SERVER_CONFIG` as a JSON object. It includes the server command, arguments, and transport method (`stdio`, `sse`, `websocket`).
+
+2. Optionally provide `MCP_PROMPT` with important usage instructions or constraints for the agent.
+
+3. Specify a list of MCP tool names in `MCP_TOOLS_TO_INCLUDE` if you wish to restrict which tools agents load. Leave empty to include all.
+
+### Local Filesystem MCP Server Example
+
+To let the agent browse and read files within designated directories:
+
+```env
+MCP_SERVER_CONFIG={"filesystem": {"command": "npx", "args": ["-y", "@modelcontextprotocol/server-filesystem", "/path/to/your/docs"], "transport": "stdio"}}
+MCP_PROMPT=CRITICAL: Follow exact order: 1) `list_allowed_directories`. 2) `list_directory`. 3) `read_file`. Do not deviate.
+MCP_TOOLS_TO_INCLUDE=["list_allowed_directories", "list_directory", "read_file"]
+```
+
+### Tips
+
+- When using MCP tools, the `search_api` may be set to `none` to disable web searches.
+- For remote MCP servers, provide URL and authentication details as part of `MCP_SERVER_CONFIG`.
+- Ensure all MCP servers are running and accessible before launching the agent.
+
+---
+
+## 8. Validating Your Configuration
+
+After editing your `.env` file, verify the agent picks up the settings:
+
+1. Restart your LangGraph server if it was running.
+2. Launch the agent and confirm it uses the desired models and search APIs.
+3. For MCP tools, confirm the agent can successfully call MCP services.
+
+Use the logs and Studio UI to view the startup messages and confirm environment variables are applied.
+
+---
+
+## 9. Troubleshooting Common Configuration Issues
+
+<AccordionGroup title="Common Configuration Problems and Solutions">
+
+<Accordion title="API Key Issues">
+- **Symptom:** Authentication errors or failed API calls.
+- **Solution:** Double-check your API key values in the `.env` file. Ensure keys have no extra whitespace or quotes. Restart services after editing `.env`.
+</Accordion>
+
+<Accordion title="Model Selection Not Applied">
+- **Symptom:** Agent uses default models instead of your configured ones.
+- **Solution:** Confirm variable names match exactly as documented. Remove conflicting overrides in your environment or other config sources.
+</Accordion>
+
+<Accordion title="MCP Server Connection Fails">
+- **Symptom:** MCP-based tool calls timeout or error out.
+- **Solution:** Ensure MCP server process is running and reachable. Validate your `MCP_SERVER_CONFIG` is correct JSON. Confirm transport method matches server.
+</Accordion>
+
+<Accordion title="Search API Configuration Ignored">
+- **Symptom:** Search API does not switch when modifying `SEARCH_API`.
+- **Solution:** Check if multi-agent or workflow implementation is active; some search APIs do not apply to both. Restart to apply changes.
+</Accordion>
+
+</AccordionGroup>
+
+---
+
+## 10. Next Steps
+
+- Review the [Installation](./installation) page for full environment setup details.
+- For usage, see [Launching the Agent](../first-run-usage/launching-agent) and [Your First Research Query](../first-run-usage/your-first-research-query).
+- For advanced customization, explore [Configuring Research Agents](../../guides/core-workflows/configuring-research-agents).
+- If integrating MCP servers, consult the [Integration Patterns: MCP Servers & Tools](../../concepts/security-and-integrations/integration-patterns).
+
+
+---
+
+## References
+
+- [`.env.example` file in the repo](https://github.com/langchain-ai/open_deep_research/blob/main/.env.example)
+- [Legacy multi-agent configuration code](https://github.com/langchain-ai/open_deep_research/blob/main/src/legacy/multi_agent.py#L20)
+- [Open Deep Research README - Configuration Section](https://github.com/langchain-ai/open_deep_research/blob/main/README.md#configurations)
+- [LangChain init_chat_model() Documentation](https://python.langchain.com/docs/how_to/chat_models_universal_init/)
+
+
+---

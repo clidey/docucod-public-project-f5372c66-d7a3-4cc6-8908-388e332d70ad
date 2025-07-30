@@ -1,0 +1,180 @@
+---
+title: "Building Custom Agents with Open Agent Platform"
+description: "Learn how to add, configure, and share Deep Researcher agents within the Open Agent Platform for non-technical users. Guide includes deployment, agent publishing, and API key management."
+---
+
+# Building Custom Agents with Open Agent Platform
+
+Open Deep Research can be extended and adapted for non-technical users through integration with the Open Agent Platform (OAP). This guide walks you through adding, configuring, and sharing Deep Researcher agents within OAP’s low-code environment. You will learn how to deploy agents, manage API keys securely, customize research capabilities, and distribute your agents for broader organizational use.
+
+---
+
+## 1. Overview
+
+Open Agent Platform (OAP) empowers users without coding skills to interact with powerful research agents like Deep Researcher by offering a user-friendly interface to build, run, and manage agents and their configurations. Integrating Open Deep Research with OAP enables rapid experimentation, easy agent customization, and streamlined access to research workflows.
+
+This guide assumes you have a working Open Deep Research installation and basic familiarity with platform deployment.
+
+---
+
+## 2. Prerequisites
+
+Before proceeding, ensure you have:
+
+- A running Open Agent Platform instance (hosted or local)
+- Administrative access to OAP for agent publishing
+- Open Deep Research code base installed and configured locally or on a server
+- API keys for model providers (OpenAI, Anthropic, Groq) and search APIs (Tavily, DuckDuckGo, etc.)
+- MCP server configurations if you plan to leverage MCP tools
+
+---
+
+## 3. Adding Deep Researcher Agents to OAP
+
+### 3.1 Agent Packaging
+
+1. **Prepare Agent Codebase:**
+   - Make sure your version of Open Deep Research is stable and tested.
+   - Update any configuration defaults as needed (models, search APIs, MCP tools).
+
+2. **Create Agent Metadata:**
+   - In OAP, create `agent.yaml` or similar descriptor files specifying:
+     - Agent name (e.g., 'Deep Researcher')
+     - Entry point (e.g., `deep_researcher.py` with its runnable graph)
+     - Supported models and environment variables
+     - Required permissions (API keys, file system access)
+
+3. **Define Input Schema:**
+   - Define messages input field where users will enter their research queries.
+   - Optional: Add configuration controls for expert users (search API choice, concurrency limits).
+
+### 3.2 Deploying the Agent
+
+- Use OAP CLI or web UI to upload your agent package.
+- Bind environment variables securely within OAP settings (no hard-coding API keys).
+- Test agent execution within OAP sandbox environment to verify connectivity and responses.
+
+---
+
+## 4. Configuring Agents for End Users
+
+### 4.1 Model and Search API Configuration
+
+- Expose selectable options for models and search providers via OAP UI.
+- Provide safe defaults such as:
+  - `openai:gpt-4.1` or `anthropic:claude-3.7` models for research
+  - `tavily` or `duckduckgo` for web search APIs
+- Allow disabling web search to run MCP-only research by selecting `search_api: 'none'`.
+
+### 4.2 MCP Server Integration
+
+- Configure local or remote MCP servers for agents:
+  - **Local MCP Server Example**
+    ```json
+    {
+      "filesystem": {
+        "command": "npx",
+        "args": ["-y", "@modelcontextprotocol/server-filesystem", "/path/to/allowed/dir"],
+        "transport": "stdio"
+      }
+    }
+    ```
+
+- Add custom MCP prompts within agent configuration to guide tool usage.
+- Limit MCP tools exposed to users by specifying `mcp_tools_to_include` in config.
+
+---
+
+## 5. Publishing and Sharing Agents
+
+### 5.1 Version Control and Updates
+
+- Use OAP’s version management to release updated agents.
+- Document changes in release notes, especially if you add new MCP servers or change model versions.
+
+### 5.2 Access and Permissions
+
+- Assign agents to specific user groups or roles within OAP to control availability.
+- Share agents across teams for consistent research workflows.
+
+---
+
+## 6. Managing API Keys and Sensitive Data
+
+- Never store API keys in agent code.
+- Use OAP’s environment secret management:
+  - Store API keys securely within OAP.
+  - Inject keys at runtime into agent environment.
+
+- Rotate keys regularly and document key management policies.
+
+---
+
+## 7. Running Agents in OAP
+
+### 7.1 User Interaction
+
+- Users enter research queries in the OAP UI input field.
+- Agents execute with configured parameters and return structured markdown reports.
+- Users can download or share generated reports directly.
+
+### 7.2 Monitoring and Logging
+
+- Use OAP’s built-in monitoring tools to track agent usage and runtime errors.
+- Enable logging to capture API calls, research iterations, and potential issues.
+
+---
+
+## 8. Troubleshooting Tips
+
+- **Agent fails to start**: Verify API key injection and environment variable setup in OAP.
+- **MCP tools not found**: Confirm MCP server config correctness and that MCP tools are included in agent config.
+- **Search results missing or empty**: Check search API credentials, usage limits, and network connectivity.
+- **Model errors or timeouts**: Adjust concurrency limits, increase token or timeout settings.
+- **Unexpected report content**: Review prompt overrides and custom MCP prompts for correctness.
+
+---
+
+## 9. Best Practices
+
+- Regularly update agent models and MCP server versions for newest features.
+- Use default safe configurations for non-technical users.
+- Provide documentation or quick start guides within OAP UI.
+- Monitor agent load and scale backend resources accordingly.
+- Leverage OAP’s UI to customize agents for different organizational needs without code changes.
+
+---
+
+## 10. Resources and Next Steps
+
+- Explore the [Open Deep Research GitHub repo](https://github.com/langchain-ai/open_deep_research) for agent code and examples.
+- Learn more about OAP deployment and management in the [Open Agent Platform docs](https://docs.oap.langchain.com/).
+- Review MCP server setup and available MCP tools in the [Model Context Protocol documentation](https://modelcontextprotocol.io/).
+- For detailed agent customization, consult the [Open Deep Research configuration setup guide](/getting-started/setup-basics/configuration-setup).
+- To enhance research quality, explore evaluation best practices in the [Evaluation and Benchmarking guide](/guides/evaluation-and-best-practices/running-evaluations).
+
+---
+
+## Appendix: Example MCP Server Configuration for OAP
+
+```json
+{
+  "filesystem": {
+    "command": "npx",
+    "args": [
+      "-y",
+      "@modelcontextprotocol/server-filesystem",
+      "/Users/yourusername/files"
+    ],
+    "transport": "stdio"
+  },
+  "arcade": {
+    "url": "https://api.arcade.dev/v1/mcps/ms_example",
+    "tools": ["Search_SearchHotels", "Search_SearchFlights"]
+  }
+}
+```
+
+Add this JSON config as part of your agent settings in OAP to enable extended capabilities.
+
+---
