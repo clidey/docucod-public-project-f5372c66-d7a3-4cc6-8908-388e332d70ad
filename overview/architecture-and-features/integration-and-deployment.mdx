@@ -3,4 +3,159 @@ title: "Integration & Deployment Options"
 description: "Overview of how Open Deep Research integrates with platforms such as LangGraph Studio, Open Agent Platform (OAP), and MCP servers. Summarize deployment avenues from local development to cloud-hosted environments and third-party agent orchestrators."
 ---
 
-*This page will automatically be generated from the codebase*
+# Integration & Deployment Options
+
+## Unlocking Seamless Integration and Scalable Deployment
+
+Open Deep Research empowers you to harness advanced research automation by integrating effortlessly with powerful platforms and deploying flexibly across diverse environments. Whether you're a developer aiming to embed a deep research assistant into your product ecosystem or an organization seeking scalable cloud-hosted solutions, this page guides you through the key integration touchpoints and deployment pathways.
+
+### Why Integration & Deployment Matter
+
+Integrations enable Open Deep Research to tap into richer data sources, facilitate easier configuration, and provide users with tailored research experiences. Deployment flexibility ensures you can run the system locally for development, scale it on the cloud for production, or embed it in third-party orchestrators for customized workflows.
+
+---
+
+## Platform Integrations Overview
+
+Open Deep Research currently integrates deeply with these platforms:
+
+### LangGraph Studio
+
+LangGraph Studio serves as the primary interactive interface for running and configuring Open Deep Research locally or in development setups. It provides:
+
+- A visual workflow editor showcasing the research pipeline and agent state
+- Interactive input and message logs for improving query and report precision
+- Easy switching of models, search tools, and research parameters
+
+**Benefits:**
+- Immediate access to model and search API toggles
+- Full visibility into the research process with checkpointing and restart capability
+- Ideal for researchers and developers refining workflows before production deployments
+
+### Open Agent Platform (OAP)
+
+OAP offers a non-technical, UI-driven environment to create, configure, and deploy AI agents including Open Deep Research. It empowers diverse teams by:
+
+- Allowing custom agent configuration on search APIs and MCP tools
+- Enabling agent deployment without coding expertise
+- Supporting agent orchestration, scaling, and user access management
+
+**Benefits:**
+- Democratizes creation of research agents
+- Provides an enterprise-ready, scalable platform
+- Offers a marketplace to share and reuse agent configurations
+
+### Model Context Protocol (MCP) Servers
+
+MCP servers are external data and tool sources that Open Deep Research can connect with to enrich research output. Integration with MCP servers:
+
+- Enables agents to access local files, private APIs, databases, and SaaS platforms
+- Supports secure, real-time tool calling standardized through a universal API
+- Extends research beyond traditional web searches to custom organizational knowledge
+
+**Example Use Cases:**
+- Local documentation file analysis
+- Querying corporate databases or APIs
+- Accessing proprietary research assets
+
+**Important:** MCP support is enabled exclusively in the multi-agent implementation.
+
+---
+
+## Deployment Options
+
+Open Deep Research supports various deployment models tailored to user needs, ranging from local development to enterprise-scale cloud environments.
+
+### 1. Local Development Deployment
+
+Run Open Deep Research on your local machine using the LangGraph server:
+
+- Install dependencies and launch the LangGraph server
+- Access LangGraph Studio via web browser for full development and testing
+- Ideal for iterative configuration, debugging, and proof-of-concept demos
+
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Start LangGraph server
+langgraph dev
+```
+
+### 2. Cloud-Hosted Deployment
+
+Deploy Open Deep Research to cloud platforms such as LangGraph Platform:
+
+- Supports containerized and serverless environments
+- Scales automatically based on research demand
+- Allows integration with managed search APIs and MCP servers
+
+This deployment is suited for production workloads requiring high availability and multi-user access.
+
+### 3. Integration into Third-Party Orchestrators
+
+Embed Open Deep Research agents in third-party frameworks that support agent orchestration:
+
+- Use the Open Agent Platform to deploy and manage agents
+- Integrate with platforms providing API access to LLMs and search tools
+- Customize agent workflows to fit existing organizational processes
+
+**Benefits:**
+- Centralized management of diverse agents
+- Simplified user onboarding with UI-driven controls
+- Flexible extension with additional agents or tools
+
+---
+
+## Practical Tips & Best Practices
+
+- **Select Deployment Based on Use Case:** Use local LangGraph Studio for development, shift to cloud hosting for production, and leverage OAP for enterprise user management.
+- **Configure MCP Servers Carefully:** For secure data access, restrict MCP filesystem operations to predefined directories, and provide clear usage instructions in prompts.
+- **Manage API Keys Securely:** Protect and limit model and search API keys using environment variables or secured platform secrets.
+- **Optimize Model and Tool Settings:** Choose models that support structured outputs and tool calling, and configure search APIs to balance freshness with relevance.
+
+---
+
+## Common Pitfalls & Troubleshooting
+
+<AccordionGroup title="Common Integration and Deployment Challenges">
+<Accordion title="MCP Server Connectivity Issues">
+Ensure your MCP server is correctly configured with the right command and transport settings. Validate that the client can establish a connection, and confirm tools are included in the configuration. Check logs for authorization or protocol version mismatches.
+</Accordion>
+<Accordion title="Model Compatibility Problems">
+Verify the selected models support structured outputs and tool calling. Incompatibility can cause failures in report generation or tool execution. Prefer tested models like Anthropic Claude or OpenAI GPT-4.1.
+</Accordion>
+<Accordion title="Search API Misconfiguration">
+Make sure you supply valid API keys and configure the correct search API name in your deployment environment. Some APIs require additional parameters for domain restrictions or result limits.
+</Accordion>
+<Accordion title="Deployment Environment Resource Constraints">
+In cloud or containerized deployments, allocate sufficient CPU, memory, and network bandwidth. Running multiple concurrent research units demands adequate resources to avoid timeouts or failures.
+</Accordion>
+</AccordionGroup>
+
+---
+
+## Getting Started Preview
+
+To get started with integration and deployment:
+
+1. **Local Setup:** Clone the repository and start the LangGraph server for local development.
+2. **Explore Studio:** Use LangGraph Studio to experiment with models, tools, and workflows.
+3. **Add MCP Servers:** Configure MCP servers as needed for local or remote data access.
+4. **Deploy to Cloud or OAP:** Follow platform-specific instructions to publish your agents.
+
+For detailed steps, see the [Prerequisites & System Requirements](/getting-started/setup-basics/prerequisites-system-requirements) and [Installation](/getting-started/setup-basics/installation) pages.
+
+---
+
+## Additional Resources
+
+- [System Architecture Overview](/overview/architecture-and-features/system-architecture) — Understand the core components and data flows
+- [How the Research Process Works](/overview/architecture-and-features/how-research-flows) — Learn about full research workflows
+- [Using Search APIs and MCP Servers](/guides/integration-patterns/using-search-mcp-models) — In-depth integration configurations
+- [Building Custom Agents with OAP](/guides/integration-patterns/custom-agents-oap) — Extend deployment capabilities
+- [Legacy Implementations](/overview/getting-started-intro/core-concepts-and-terminology) — Explore alternative research approaches
+
+---
+
+Open Deep Research’s flexible integration and deployment design ensures your deep research assistant is tailored exactly to your environment and needs — enabling richer, faster, and more actionable research insights.
