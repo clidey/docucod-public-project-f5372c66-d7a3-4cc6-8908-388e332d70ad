@@ -1,0 +1,130 @@
+{
+  "background": {
+    "decoration": "gradient"
+  },
+  "colors": {
+    "dark": "#1E3A8A",
+    "light": "#60A5FA",
+    "primary": "#60A5FA"
+  },
+  "favicon": "/favicon.svg",
+  "fonts": {
+    "family": "Montserrat",
+    "format": "woff2",
+    "source": "https://fonts.gstatic.com/s/googlesansflex/v5/t5sJIQcYNIWbFgDgAAzZ34auoVyXkJCOvp3SFWJbN5hF8Ju1x6sKCyp0l9sI40swNJwGpVd4AZzz0v6lJ4qFXNZhGjLvDSkV4USKMo6qQzwliVdHAy9jxTDHg_ugnAakpwGc-cxgUqDCIUI.woff2"
+  },
+  "icons": {
+    "library": "fontawesome"
+  },
+  "logo": {
+    "dark": "./logo/logo.svg",
+    "light": "./logo/logo.svg"
+  },
+  "name": "Open Deep Research",
+  "navigation": {
+    "tabs": [
+      {
+        "groups": [
+          {
+            "group": "Product Introduction \u0026 Core Concepts",
+            "pages": [
+              "overview/getting-started-intro/what-is-open-deep-research",
+              "overview/getting-started-intro/core-concepts-and-terminology",
+              "overview/getting-started-intro/who-is-this-for"
+            ]
+          },
+          {
+            "group": "Architecture \u0026 Feature Overview",
+            "pages": [
+              "overview/architecture-and-features/system-architecture",
+              "overview/architecture-and-features/how-research-flows",
+              "overview/architecture-and-features/feature-spotlight",
+              "overview/architecture-and-features/integration-and-deployment"
+            ]
+          }
+        ],
+        "tab": "Overview"
+      },
+      {
+        "groups": [
+          {
+            "group": "Setup \u0026 Installation",
+            "pages": [
+              "getting-started/setup-basics/prerequisites-system-requirements",
+              "getting-started/setup-basics/installation",
+              "getting-started/setup-basics/configuration-setup"
+            ]
+          },
+          {
+            "group": "First Run \u0026 Validation",
+            "pages": [
+              "getting-started/first-run-usage/launching-agent",
+              "getting-started/first-run-usage/your-first-research-query",
+              "getting-started/first-run-usage/quick-validation-and-troubleshooting"
+            ]
+          }
+        ],
+        "tab": "Getting Started"
+      },
+      {
+        "groups": [
+          {
+            "group": "Essential Researcher Workflows",
+            "pages": [
+              "guides/core-workflows/researcher-quickstart",
+              "guides/core-workflows/configuring-research-agents",
+              "guides/core-workflows/clarification-and-iteration"
+            ]
+          },
+          {
+            "group": "Integration \u0026 Advanced Patterns",
+            "pages": [
+              "guides/integration-patterns/using-search-mcp-models",
+              "guides/integration-patterns/deployment-and-ui",
+              "guides/integration-patterns/custom-agents-oap"
+            ]
+          },
+          {
+            "group": "Evaluation \u0026 Best Practices",
+            "pages": [
+              "guides/evaluation-and-best-practices/running-evaluations",
+              "guides/evaluation-and-best-practices/performance-and-reliability-tips",
+              "guides/evaluation-and-best-practices/legacy-implementations-guide"
+            ]
+          }
+        ],
+        "tab": "Guides"
+      },
+      {
+        "groups": [
+          {
+            "group": "Core Architecture \u0026 Research Workflow",
+            "pages": [
+              "concepts/core-architecture/agent-overview",
+              "concepts/core-architecture/state-graphs-and-async-flows"
+            ]
+          },
+          {
+            "group": "Data Models \u0026 Configurations",
+            "pages": [
+              "concepts/data-and-models/agent-state-and-messages",
+              "concepts/data-and-models/configuration-and-model-selection"
+            ]
+          },
+          {
+            "group": "Security Model \u0026 Integrations",
+            "pages": [
+              "concepts/security-and-integrations/security-model-and-permissions",
+              "concepts/security-and-integrations/integration-patterns"
+            ]
+          }
+        ],
+        "tab": "Concepts"
+      }
+    ]
+  },
+  "styling": {
+    "codeblocks": "dark",
+    "eyebrows": "breadcrumbs"
+  }
+}
